@@ -30,6 +30,7 @@ export default function App() {
 		>
 			<Text style={{ fontStyle: "bold", fontSize: 20 }}>{dText}</Text>
 			<TextInput
+				maxLength={3}
 				style={{ fontSize: 20 }}
 				keyboardType="numeric"
 				returnKeyType="done"
