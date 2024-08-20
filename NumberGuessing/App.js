@@ -11,6 +11,8 @@ export default function App() {
 		if (guess == answer) {
 			Alert.alert("You get the number in " + count + " guesses");
 			setDText("Guess a number between 1-100");
+			setAnswer(Math.floor(Math.random() * 100) + 1);
+			setGuess("");
 		} else if (guess < answer) {
 			setCount(count + 1);
 			setDText("Your guess " + guess + " is too low");
