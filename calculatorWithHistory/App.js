@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button ,FlatList} from "react-native";
+import { View, Text, TextInput, Button, FlatList } from "react-native";
 import { useState } from "react";
 
 export default function App() {
@@ -20,7 +20,7 @@ export default function App() {
 	return (
 		<View
 			style={{
-				paddingTop:180,
+				paddingTop: 180,
 				flex: 1,
 				flexDirection: "column",
 				alignItems: "center",
@@ -52,19 +52,18 @@ export default function App() {
 					justifyContent: "space-around",
 				}}
 			>
-				<Button  title="+" onPress={plusPressed} />
+				<Button title="+" onPress={plusPressed} />
 				<Button title="-" onPress={minusPressed} />
 			</View>
-				<FlatList
-					data={history}
-					renderItem={({ item }) => (
-						<View >
-							<Text >{item}</Text>
-						</View>
-					)}
-				/>
+			<Text> History</Text>
+			<FlatList
+				data={history}
+				renderItem={({ item }) => (
+					<View>
+						<Text>{item}</Text>
+					</View>
+				)}
+			/>
 		</View>
 	);
 }
-
-
