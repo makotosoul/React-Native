@@ -32,7 +32,7 @@ export default function QrConverter() {
 					value={link}
 					onChangeText={(nextValue) => setLink(nextValue)}
 				/>
-				<Button style={styles.button} onPress={convertToQRCode}>
+				<Button status={"danger"} style={styles.button} onPress={convertToQRCode}>
 					Convert to QR code
 				</Button>
 				{showQR ? <QRCode value={link} size={200} /> : null}

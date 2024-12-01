@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
-import React from "react";
+import { StyleSheet, Share } from "react-native";
+import React, { useEffect, useState } from "react";
 import * as eva from "@eva-design/eva";
 import {
 	ApplicationProvider,
@@ -8,23 +8,57 @@ import {
 	Input,
 	Button,
 } from "@ui-kitten/components";
+import { useSQLiteContext } from "expo-sqlite";
 import RestAPI from "./RestAPI";
+import History from "./History";
 
-export default function LinkShorter() {
-	const [link, setLink] = React.useState("");
-	const [shortenLink, setShortenLink] = React.useState("");
-	const [showLink, setShowLink] = React.useState(false);
+const LinkShorter = () => {
+
+	const db = useSQLiteContext();
+	const [link, setLink] = useState("");
+	const [shortenLink, setShortenLink] = useState("");
+	const [showLink, setShowLink] = useState(false);
+	const [update, setUpdate] = useState(false);
+
+	const initialize = async () => {
+		try {
+			await db.execAsync(`
+        CREATE TABLE IF NOT EXISTS history (id INTEGER PRIMARY KEY NOT NULL, link TEXT);
+      `);
+		} catch (error) {
+			console.error("Could not open database", error);
+		}
+	};
+
 	const convertToShortenLink = async () => {
 		const data = await RestAPI(link);
 		setShortenLink(data.data.tiny_url);
 		setShowLink(true);
+		try {
+			await db.runAsync("INSERT INTO history (link) VALUES (?)", link);
+			setUpdate((prev) => !prev);
+		} catch (error) {
+			console.error("Could not add link", error);
+		}
 	};
+
+	const shareShortenLink = async () => {
+		try {
+			await Share.share({ message: shortenLink });
+		} catch (error) {
+			alert(error.message);
+		}
+	};
+
+	useEffect(() => {
+		initialize();
+	}, []);
 
 	return (
 		<ApplicationProvider {...eva} theme={eva.light}>
 			<Layout style={styles.container}>
 				<Text style={styles.text} category="h1">
-					Link Shorten
+					LINK SHORTENER
 				</Text>
 				<Input
 					returnKeyType="done"
@@ -37,10 +71,20 @@ export default function LinkShorter() {
 					Shorten Link
 				</Button>
 				{showLink && <Text>{shortenLink}</Text>}
+				{showLink && (
+					<Button
+						status={"success"}
+						style={{ marginTop: 20 }}
+						onPress={shareShortenLink}
+					>
+						Share Link!
+					</Button>
+				)}
+
 			</Layout>
 		</ApplicationProvider>
 	);
-}
+};
 
 const styles = StyleSheet.create({
 	container: {
@@ -61,3 +105,5 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 });
+
+export default LinkShorter;
